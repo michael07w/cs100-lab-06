@@ -28,6 +28,85 @@ TEST(PrintSelectionTest, EmptySheetWithNullPointer) {
 
 // Will add further tests for print_selection() once SELECT_* classes are implemented
 
+TEST(SelectContains, SheetDoesNotContainValueInColumn) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Joe", "Schmo", "22", "mathematics"});
+
+    Select* select = new Select_Contains(&sheet, "Last", "Johnson");
+    EXPECT_FALSE(select->select(&sheet, 0));
+    delete select;
+}
+
+TEST(SelectContains, SheetContainsExactValue) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Joe", "Schmo", "22", "mathematics"});
+
+    Select* select = new Select_Contains(&sheet, "Major", "mathematics");
+    EXPECT_TRUE(select->select(&sheet, 0));
+    delete select;
+}
+
+TEST(SelectContains, SearchForSubstring) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Joe", "Schmo", "22", "computer science"});
+    sheet.add_row({"Dwight", "Schrute", "30", "mathematics"});
+
+    Select* select = new Select_Contains(&sheet, "Major", "math");
+    EXPECT_TRUE(select->select(&sheet, 1));
+    delete select;
+}
+
+TEST(SelectContains, CaseMismatch) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Joe", "Schmo", "22", "computer science"});
+    sheet.add_row({"Dwight", "Schrute", "30", "mathematics"});
+
+    Select* select = new Select_Contains(&sheet, "Major", "Math");
+    EXPECT_FALSE(select->select(&sheet, 1));
+    delete select;
+}
+
+TEST(SelectContains, SearchForEmptyString) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Joe", "Schmo", "22", "computer science"});
+    sheet.add_row({"Dwight", "Schrute", "30", "mathematics"});
+
+    // empty string should always return true
+    // empty string is a substring of all strings
+    Select* select = new Select_Contains(&sheet, "Major", "");
+    EXPECT_TRUE(select->select(&sheet, 0));
+    delete select;
+}
+
+TEST(SelectContains, EmptyStringMatchWithEmptyString) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Joe", "Schmo", "22", ""});
+    sheet.add_row({"Dwight", "Schrute", "30", "mathematics"});
+
+    // empty string should match with empty string
+    Select* select = new Select_Contains(&sheet, "Major", "");
+    EXPECT_TRUE(select->select(&sheet, 0));
+    delete select;
+}
+
+TEST(SelectContains, QueryNonExistentColumn) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Dwight", "Schrute", "30", "mathematics"});
+
+    Select* select = new Select_Contains(&sheet, "Middle", "Steve");
+    EXPECT_FALSE(select->select(&sheet, 0));
+    delete select;
+}
+
+// Need to implement test for more than one column with same name
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

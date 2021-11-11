@@ -4,6 +4,8 @@ SET(CMAKE_CXX_STANDARD 11)
 
 ADD_SUBDIRECTORY(googletest)
 
+ADD_COMPILE_OPTIONS(-g -O0 -fno-inline)
+
 ADD_EXECUTABLE(spreadsheet main.cpp spreadsheet.cpp)
 ADD_EXECUTABLE(test test.cpp)
 
