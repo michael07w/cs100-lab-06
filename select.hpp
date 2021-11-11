@@ -31,11 +31,34 @@ public:
 
     virtual bool select(const Spreadsheet* sheet, int row) const
     {
+	// must return false if column doesn't exist, otherwise we would be trying to make a query on a nonexistent column
+	if (column == -1)
+	    return false;
+
         return select(sheet->cell_data(row, column));
     }
 
     // Derived classes can instead implement this simpler interface.
     virtual bool select(const std::string& s) const = 0;
+};
+
+class Select_Contains: public Select_Column {
+    private:
+	std::string value_to_find;
+    public:
+	// Constructor stores column index and calls parent class constructor
+	Select_Contains(Spreadsheet* sheet, std::string col_name, std::string value)
+	: Select_Column(sheet, col_name) {
+	    value_to_find = value;
+	}
+	
+	// check if row includes value
+	virtual bool select(const std::string& s) const {
+            // search for string in column
+	    if (s.find(value_to_find) != std::string::npos)
+		return true;
+	    return false;
+	}
 };
 
 #endif //__SELECT_HPP__
