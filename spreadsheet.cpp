@@ -40,3 +40,17 @@ int Spreadsheet::get_column_by_name(const std::string& name) const
             return i;
     return -1;
 }
+
+void Spreadsheet::print_selection(std::ostream& out) const {
+    // iterate through each row in spreadsheet
+    for (int i = 0; i < data.size(); i++) {
+	// if select returns true or select is null pointer, print each column of each row
+        if (select == nullptr || select->select(this, i) == true) {
+	    for (int j = 0; j < data[i].size(); j++) {
+	        out << data[i][j] << " ";
+	    }
+	    // print newline after each row
+	    out << std::endl;
+	}
+    }
+}
