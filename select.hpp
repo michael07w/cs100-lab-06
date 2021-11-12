@@ -102,4 +102,22 @@ class Select_And : public Select {
 	    }
 };		                                                
 
+class Select_Or : public Select {
+        private:
+            Select *inp1;
+            Select *inp2;
+        public:
+            Select_Or(Select* p1, Select* p2) {
+                inp1 = p1;
+                inp2 = p2;
+            }
+            ~Select_Or() {
+                delete inp1;
+                delete inp2;
+            }
+            virtual bool select(const Spreadsheet* sheet, int row) const {
+                return (inp1->select(sheet, row) || (inp2->select(sheet, row)));
+            }
+};
+
 #endif //__SELECT_HPP__
