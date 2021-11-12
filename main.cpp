@@ -25,12 +25,13 @@ int main(int argc, char* argv[])
     sheet.print_selection(std::cout);
     std::cout << std::endl;
     
-    //Sample usage 2
+
+    // Sample usage 2
     sheet.set_selection(
         new Select_And(
-            new Select_Contains(&sheet,"Last","Dole"),
+    	    new Select_Contains(&sheet,"Last","Dole"),
             new Select_Not(
-                new Select_Contains(&sheet,"First","v"))));
+    		new Select_Contains(&sheet,"First","v"))));
     
     sheet.print_selection(std::cout);
     std::cout << std::endl;
