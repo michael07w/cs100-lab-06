@@ -129,6 +129,24 @@ TEST(SelectNot, SelectedItemIsPresent) {
     delete select;
 }
 
+TEST(SelectAnd, MajorandLastNameAreNotPresent) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Joe", "Schmo", "22", "english"});
+    Select* select = new Select_And(new Select_Contains(&sheet, "Last", "Schmo"), new Select_Contains(&sheet, "Major", "22"));
+    EXPECT_FALSE(select->select(&sheet, 0));
+    delete select;
+}
+
+TEST(SelectAnd, AgeandLastNameArePresent) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Joe", "Schmo", "22", "english"});
+    Select* select = new Select_And(new Select_Contains(&sheet, "Last", "Schmo"), new Select_Contains(&sheet, "Age", "22"));
+    EXPECT_TRUE(select->select(&sheet, 0));
+    delete select;
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
