@@ -61,4 +61,27 @@ class Select_Contains: public Select_Column {
 	}
 };
 
+class Select_Not: public Select {
+    private:
+	Select* local_select_obj;
+
+    public:
+	// Constructor stores reference to Select
+	Select_Not(Select* select) {
+	    local_select_obj = select;
+	}
+
+	// Destructor should delete internal Select object
+	~Select_Not() {
+	    delete local_select_obj;
+	}
+
+	// Implement virtual function from base class (Select)
+	virtual bool select(const Spreadsheet* sheet, int row) const {
+	    if (local_select_obj->select(sheet, row) == false)
+		return true;
+	    return false;
+	}
+};
+
 #endif //__SELECT_HPP__

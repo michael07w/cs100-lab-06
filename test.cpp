@@ -107,6 +107,28 @@ TEST(SelectContains, QueryNonExistentColumn) {
 
 // Need to implement test for more than one column with same name
 
+TEST(SelectNot, SelectedItemIsNotPresent) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Dwight", "Schrute", "30", "mathematics"});
+
+    Select* select = new Select_Not(new Select_Contains(&sheet, "Major", "english"));
+    // sheet does not contain english in Major column on row 0, so we should return true
+    EXPECT_TRUE(select->select(&sheet, 0));
+    delete select;
+}
+
+TEST(SelectNot, SelectedItemIsPresent) {
+    Spreadsheet sheet;
+    sheet.set_column_names({"First", "Last", "Age", "Major"});
+    sheet.add_row({"Joe", "Schmo", "22", "english"});
+
+    Select* select = new Select_Not(new Select_Contains(&sheet, "Major", "english"));
+    // sheet does contains "english" in Major column on row 0, so we should return false
+    EXPECT_FALSE(select->select(&sheet, 0));
+    delete select;
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
