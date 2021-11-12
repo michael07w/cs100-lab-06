@@ -3,6 +3,13 @@
 
 #include <algorithm>
 #include <iostream>
+#include <map>
+
+struct DupColumns : public std::exception {
+    const char* what() const throw() {
+	return "Cannot have duplicate column names!";
+    }
+};
 
 Spreadsheet::~Spreadsheet()
 {
@@ -25,6 +32,16 @@ void Spreadsheet::clear()
 
 void Spreadsheet::set_column_names(const std::vector<std::string>& names)
 {
+    // prevent duplicate column name creation
+    std::map<std::string, int> mymap;
+    for (int i = 0; i < names.size(); i++) {
+	if (mymap.find(names[i]) == mymap.end())
+	    mymap.insert(std::pair<std::string, int>(names[i], 0));
+	else
+	    throw DupColumns();
+    }
+
+    // no duplicates, set column names
     column_names=names;
 }
 
