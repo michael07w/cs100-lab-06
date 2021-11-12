@@ -165,6 +165,19 @@ TEST(SelectOr, AgeOrLastNameArePresent) {
     delete select;
 }
 
+TEST(DuplicateColumns, SameFirst) {
+    Spreadsheet sheet;
+    EXPECT_THROW({
+	try {
+	    sheet.set_column_names({"First", "First", "Age", "Major"});
+	}
+	catch (const DupColumns& e) {
+	    EXPECT_STREQ("Cannot have duplicate column names!" , e.what());
+	    throw;
+	}
+    }, DupColumns);
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
